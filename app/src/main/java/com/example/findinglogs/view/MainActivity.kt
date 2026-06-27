@@ -1,42 +1,153 @@
 package com.example.findinglogs.view
 
 import android.os.Bundle
-import android.view.View
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
-import androidx.recyclerview.widget.RecyclerView
 import com.example.findinglogs.R
-import com.example.findinglogs.model.model.Weather
-import com.example.findinglogs.view.recyclerview.adapter.WeatherListAdapter
-import com.example.findinglogs.viewmodel.MainViewModel
-import com.google.android.material.floatingactionbutton.FloatingActionButton
+import androidx.activity.compose.setContent
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material3.Text
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 
 class MainActivity : AppCompatActivity() {
-    private var adapter: WeatherListAdapter? = null
-    private val weathers: List<Weather> = ArrayList()
-    private var fetchButton: FloatingActionButton? = null
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-        val mainViewModel = ViewModelProvider(this).get(
-            MainViewModel::class.java
-        )
-        val recyclerView = findViewById<RecyclerView>(R.id.recycler_view_weather)
-        fetchButton = findViewById(R.id.fetchButton)
-        adapter = WeatherListAdapter(this, weathers)
-        recyclerView.adapter = adapter
-        mainViewModel.weatherList.observe(
-            this,
-            Observer { weathers: List<Weather?>? -> adapter!!.updateWeathers(weathers) })
+        setContent {
+            MaterialTheme{
+                WeatherMainScreen()
+            }
+        }
+    }
+}
 
-        fetchButton.setOnClickListener(View.OnClickListener { v: View? ->
-            Toast.makeText(
-                this@MainActivity, "Not Implemenented yet",
-                Toast.LENGTH_SHORT
-            ).show()
-        })
+@Composable
+fun WeatherMainScreen (){
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(colorResource(R.color.weather_snow_dark))
+    ) {
+        Column (
+            modifier = Modifier.padding(vertical = 64.dp)
+        )
+        {
+            TitleCard(stringResource(R.string.weather_app))
+
+            WeatherInfoCardList()
+        }
+    }
+}
+
+@Composable
+fun TitleCard(title: String){
+    Card (
+        shape = RoundedCornerShape(8.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = colorResource(R.color.weather_few_clouds)
+        ),
+        modifier = Modifier
+            .padding(horizontal = 16.dp)
+            .fillMaxWidth()
+            .height(116.dp)
+
+    ) {
+        Text(
+            text = title,
+            fontSize = 36.sp,
+            textAlign = TextAlign.Center,
+            modifier = Modifier
+                .align(alignment = Alignment.CenterHorizontally)
+                .padding(all = 36.dp)
+        )
+    }
+}
+
+@Composable
+fun WeatherInfoCardList() {
+    LazyColumn(
+        modifier = Modifier.padding(horizontal = 0.dp)
+    ) {
+        items(10){
+            WeatherInfoCard()
+        }
+    }
+}
+
+@Composable
+fun WeatherInfoCard() {
+    Card (
+        shape = RoundedCornerShape(8.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = colorResource(R.color.weather_scattered_clouds_dark)
+        ),
+        modifier = Modifier
+            .padding(horizontal = 16.dp, vertical = 8.dp)
+            .fillMaxWidth()
+            .height(164.dp)
+    ) {
+        Row (
+            modifier = Modifier.padding(2.dp)
+        ) {
+            Image(
+                painter = painterResource(R.drawable.weather_icon_04n),
+                contentDescription = "Weather Image",
+                modifier = Modifier
+                    .size(148.dp)
+                    .padding(top = 8.dp)
+            )
+
+            Column (
+                modifier = Modifier.padding(6.dp)
+            ){
+                WeatherInfoCardText("Recife", 24, FontWeight.ExtraBold)
+                WeatherInfoCardText("Info1: value1", 16, FontWeight.Bold)
+                WeatherInfoCardText("Info2: value2", 16)
+                WeatherInfoCardText("Info3: value3", 16)
+                WeatherInfoCardText("Info4: value4", 14)
+                WeatherInfoCardText("Info5: value5", 14)
+            }
+        }
+    }
+}
+
+@Composable
+fun WeatherInfoCardText(info: String, size: Int, fontWeight: FontWeight = FontWeight.Normal){
+    Text(
+        text = info,
+        fontWeight = fontWeight,
+        fontSize = size.sp,
+        modifier = Modifier
+            .padding(horizontal = 4.dp)
+    )
+}
+
+@Preview
+@Composable
+fun DefaultPreview() {
+    MaterialTheme{
+        WeatherMainScreen()
     }
 }
