@@ -17,16 +17,18 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Refresh
-import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
@@ -37,33 +39,43 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.findinglogs.model.model.Weather
+import com.example.findinglogs.viewmodel.MainViewModel
+import com.example.findinglogs.view.recyclerview.adapter.WeatherListAdapter
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.findinglogs.model.util.Utils
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         setContent {
             MaterialTheme{
                 WeatherMainScreen()
             }
         }
+
     }
 }
 
 @Composable
-fun WeatherMainScreen (){
+fun WeatherMainScreen (
+    mainViewModel: MainViewModel = viewModel()
+){
     Box(
         modifier = Modifier
             .fillMaxSize()
             .background(colorResource(R.color.weather_snow_dark))
     ) {
         Column (
-            modifier = Modifier.padding(vertical = 64.dp)
+            modifier = Modifier
+                .padding(vertical = 64.dp)
         )
         {
             TitleCard(stringResource(R.string.weather_app))
 
-            Box {
-                WeatherInfoCardList()
+            Box(modifier = Modifier.fillMaxSize()) {
+                WeatherInfoCardList(mainViewModel)
 
                 FloatingActionButton(
                     onClick = { },
@@ -111,18 +123,22 @@ fun TitleCard(title: String){
 }
 
 @Composable
-fun WeatherInfoCardList() {
+fun WeatherInfoCardList(
+    mainViewModel: MainViewModel = viewModel()
+) {
+    val weatherList by mainViewModel.weatherList.observeAsState(emptyList())
+
     LazyColumn(
         modifier = Modifier.padding(horizontal = 0.dp)
     ) {
-        items(10){
-            WeatherInfoCard()
+        items(weatherList){ weather ->
+            WeatherInfoCard(weather)
         }
     }
 }
 
 @Composable
-fun WeatherInfoCard() {
+fun WeatherInfoCard(weather: Weather) {
     Card (
         shape = RoundedCornerShape(8.dp),
         colors = CardDefaults.cardColors(
@@ -147,12 +163,16 @@ fun WeatherInfoCard() {
             Column (
                 modifier = Modifier.padding(6.dp)
             ){
-                WeatherInfoCardText("Recife", 24, FontWeight.ExtraBold)
-                WeatherInfoCardText("Info1: value1", 16, FontWeight.Bold)
-                WeatherInfoCardText("Info2: value2", 16)
-                WeatherInfoCardText("Info3: value3", 16)
-                WeatherInfoCardText("Info4: value4", 14)
-                WeatherInfoCardText("Info5: value5", 14)
+                val tempCelsius = Utils.getCelsiusTemperatureFromKevin(weather.main.temp)
+                val tempMaxCelsius = Utils.getCelsiusTemperatureFromKevin(weather.main.temp_max)
+                val tempMinCelsius = Utils.getCelsiusTemperatureFromKevin(weather.main.temp_min)
+
+                WeatherInfoCardText(weather.name, 24, FontWeight.ExtraBold)
+                WeatherInfoCardText("Temp. atual: ${tempCelsius}", 16, FontWeight.Bold)
+                WeatherInfoCardText("Temp. max: ${tempMaxCelsius}", 16)
+                WeatherInfoCardText("Temp. min: ${tempMinCelsius}", 16)
+                WeatherInfoCardText("Pressão: ${weather.main.pressure} hPa", 14)
+                WeatherInfoCardText("Umidade: ${weather.main.humidity}%", 14)
             }
         }
     }
