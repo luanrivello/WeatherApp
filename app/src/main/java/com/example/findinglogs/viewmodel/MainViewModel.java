@@ -4,6 +4,7 @@ package com.example.findinglogs.viewmodel;
 import android.app.Application;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
@@ -27,7 +28,7 @@ public class MainViewModel extends AndroidViewModel {
     private final LiveData<List<Weather>> weatherList = _weatherList;
 
     private final Handler handler = new Handler(Looper.getMainLooper());
-    private final Runnable fetchRunnable = this::fetchAllForecasts;
+    private final Runnable fetchRunnable = this::startFetching;
 
     public MainViewModel(Application application) {
         super(application);
@@ -37,6 +38,12 @@ public class MainViewModel extends AndroidViewModel {
 
     public LiveData<List<Weather>> getWeatherList() {
         return weatherList;
+    }
+
+    public void refreshForecasts(){
+        handler.removeCallbacks(fetchRunnable);
+        fetchAllForecasts();
+        handler.postDelayed(fetchRunnable, FETCH_INTERVAL);
     }
 
     private void startFetching() {
@@ -56,13 +63,12 @@ public class MainViewModel extends AndroidViewModel {
                     updatedList.add(result);
                     if (updatedList.size() == localizations.size()) {
                         _weatherList.setValue(updatedList);
-                        handler.postDelayed(fetchRunnable, FETCH_INTERVAL);
                     }
                 }
 
                 @Override
                 public void onFailure(String error) {
-                    handler.postDelayed(fetchRunnable, FETCH_INTERVAL);
+                    Log.d(TAG, error);
                 }
             });
         }

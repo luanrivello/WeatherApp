@@ -78,7 +78,7 @@ fun WeatherMainScreen (
                 WeatherInfoCardList(mainViewModel)
 
                 FloatingActionButton(
-                    onClick = { },
+                    onClick = { mainViewModel.refreshForecasts() },
                     shape = RoundedCornerShape(16.dp),
                     modifier = Modifier
                         .align(Alignment.BottomEnd)
