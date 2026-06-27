@@ -3,6 +3,7 @@ import java.io.FileInputStream
 
 plugins {
     alias(libs.plugins.android.application)
+    alias(libs.plugins.kotlin.android)
 }
 
 val localProperties = Properties()
@@ -29,6 +30,11 @@ android {
 
     buildFeatures {
         buildConfig = true
+        compose = true
+    }
+
+    composeOptions {
+        kotlinCompilerExtensionVersion = "1.5.15"
     }
 
     buildTypes {
@@ -45,14 +51,25 @@ android {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
+    kotlinOptions {
+        jvmTarget = "11"
+    }
 }
 
 dependencies {
+    implementation(platform("androidx.compose:compose-bom:2025.06.00"))
+
+    implementation("androidx.activity:activity-compose")
+    implementation("androidx.compose.ui:ui")
+    implementation("androidx.compose.foundation:foundation")
+    implementation("androidx.compose.material3:material3:1.4.0")
+    implementation("androidx.compose.ui:ui-tooling")
 
     implementation(libs.appcompat)
     implementation(libs.material)
     implementation(libs.activity)
     implementation(libs.constraintlayout)
+    implementation(libs.core.ktx)
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
