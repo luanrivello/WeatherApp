@@ -8,18 +8,50 @@ import com.example.findinglogs.model.repo.remote.WeatherManager;
 import com.example.findinglogs.model.repo.remote.api.WeatherCallback;
 import com.example.findinglogs.model.util.Logger;
 
-import java.util.HashMap;
+import java.util.ArrayList;
 
 public class Repository {
     private static final String TAG = Repository.class.getSimpleName();
 
     private final WeatherManager weatherManager;
     private final SharedPrefManager sharedPrefManagerManager;
+    private ArrayList<String> localizations = new ArrayList<>();
 
     public Repository(Application application) {
         if (Logger.ISLOGABLE) Logger.d(TAG, "Repository()");
         weatherManager = new WeatherManager();
         sharedPrefManagerManager = SharedPrefManager.getInstance(application);
+
+        String prefLocations = sharedPrefManagerManager.readString("localizations");
+        if (Logger.ISLOGABLE) Logger.d(TAG, "Saved localizations: " + prefLocations);
+
+        if (prefLocations == null) {
+            addDefaultLocations();
+        } else {
+            loadLocationsFrom(prefLocations);
+        }
+    }
+
+    private void addDefaultLocations() {
+        if (Logger.ISLOGABLE) Logger.d(TAG, "addDefaultLocations()");
+        localizations.add("-8.05428,-34.8813");
+        localizations.add("-9.39416,-40.5096");
+        localizations.add("-8.284547,-35.969863");
+
+        sharedPrefManagerManager.writeString("localizations", localizations.toString());
+        if (Logger.ISLOGABLE) Logger.d(TAG, "Created new localizations: " + localizations.toString());
+    }
+
+    private void loadLocationsFrom(String prefLocations) {
+        if (Logger.ISLOGABLE) Logger.d(TAG, "loadLocationsFrom(): " + prefLocations);
+        String[] entries = prefLocations.substring(1).split(" ");
+
+        for (String entrie:entries) {
+            String latlon = entrie.substring(0, entrie.length()-1);
+
+            localizations.add(latlon);
+            if (Logger.ISLOGABLE) Logger.d(TAG, "Loaded: " + latlon);
+        }
     }
 
     public void retrieveForecast(String latLon, WeatherCallback callback) {
@@ -37,11 +69,22 @@ public class Repository {
         return sharedPrefManagerManager.readString(key);
     }
 
-    public HashMap<String, String> getLocalizations() {
-        HashMap<String, String> localizations = new HashMap<>();
-        localizations.put("1", "-8.05428,-34.8813");
-        localizations.put("2", "-9.39416,-40.5096");
-        localizations.put("3", "-8.284547,-35.969863");
+    public ArrayList<String> getLocalizations() {
         return localizations;
+    }
+
+    public void addLocalization(String lat, String lon) {
+        if (Logger.ISLOGABLE) Logger.d(TAG, "addLocalization(): " + lat + "," + lon);
+        String latlon = lat + "," + lon;
+
+        localizations.add(latlon);
+        sharedPrefManagerManager.writeString("localizations", localizations.toString());
+        if (Logger.ISLOGABLE) Logger.d(TAG, "Saved localizations: " + localizations.toString());
+    }
+
+    public void removeLocalization(int index) {
+        localizations.remove(index);
+        sharedPrefManagerManager.writeString("localizations", localizations.toString());
+        if (Logger.ISLOGABLE) Logger.d(TAG, "Saved localizations: " + localizations.toString());
     }
 }
