@@ -31,6 +31,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -39,11 +41,13 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.graphics.drawable.toBitmap
 import com.example.findinglogs.model.model.Weather
 import com.example.findinglogs.viewmodel.MainViewModel
 import com.example.findinglogs.view.recyclerview.adapter.WeatherListAdapter
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.findinglogs.model.util.Utils
+import com.example.findinglogs.viewmodel.WeatherUiInfo
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -138,11 +142,13 @@ fun WeatherInfoCardList(
 }
 
 @Composable
-fun WeatherInfoCard(weather: Weather) {
+fun WeatherInfoCard(
+    weather: WeatherUiInfo
+) {
     Card (
         shape = RoundedCornerShape(8.dp),
         colors = CardDefaults.cardColors(
-            containerColor = colorResource(R.color.weather_scattered_clouds_dark)
+            containerColor = colorResource(weather.cardBackgroundColor)
         ),
         modifier = Modifier
             .padding(horizontal = 16.dp, vertical = 8.dp)
@@ -153,7 +159,7 @@ fun WeatherInfoCard(weather: Weather) {
             modifier = Modifier.padding(2.dp)
         ) {
             Image(
-                painter = painterResource(R.drawable.weather_icon_04n),
+                bitmap = weather.weatherIcon,
                 contentDescription = "Weather Image",
                 modifier = Modifier
                     .size(148.dp)
@@ -163,16 +169,12 @@ fun WeatherInfoCard(weather: Weather) {
             Column (
                 modifier = Modifier.padding(6.dp)
             ){
-                val tempCelsius = Utils.getCelsiusTemperatureFromKevin(weather.main.temp)
-                val tempMaxCelsius = Utils.getCelsiusTemperatureFromKevin(weather.main.temp_max)
-                val tempMinCelsius = Utils.getCelsiusTemperatureFromKevin(weather.main.temp_min)
-
                 WeatherInfoCardText(weather.name, 24, FontWeight.ExtraBold)
-                WeatherInfoCardText("Temp. atual: ${tempCelsius}", 16, FontWeight.Bold)
-                WeatherInfoCardText("Temp. max: ${tempMaxCelsius}", 16)
-                WeatherInfoCardText("Temp. min: ${tempMinCelsius}", 16)
-                WeatherInfoCardText("Pressão: ${weather.main.pressure} hPa", 14)
-                WeatherInfoCardText("Umidade: ${weather.main.humidity}%", 14)
+                WeatherInfoCardText("Temp. atual: ${weather.tempActual}", 16, FontWeight.Bold)
+                WeatherInfoCardText("Temp. max: ${weather.tempMax}", 16)
+                WeatherInfoCardText("Temp. min: ${weather.tempMin}", 16)
+                WeatherInfoCardText("Pressão: ${weather.pressure}", 14)
+                WeatherInfoCardText("Umidade: ${weather.humidity}", 14)
             }
         }
     }
