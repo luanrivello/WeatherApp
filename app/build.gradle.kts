@@ -67,6 +67,7 @@ dependencies {
     implementation("androidx.compose.ui:ui-tooling")
     implementation("androidx.compose.runtime:runtime-livedata")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose")
+    implementation("androidx.navigation:navigation-compose:2.7.7")
 
     implementation(libs.appcompat)
     implementation(libs.material)

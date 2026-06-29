@@ -36,13 +36,17 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.example.findinglogs.R
+import com.example.findinglogs.navigation.Screen
 import com.example.findinglogs.viewmodel.MainViewModel
 import com.example.findinglogs.viewmodel.WeatherUiInfo
 
 @Composable
-fun WeatherMainScreen (
-    mainViewModel: MainViewModel = viewModel()
+fun WeatherMainScreen(
+    navController: NavController,
+    mainViewModel: MainViewModel,
 ){
     Box(
         modifier = Modifier
@@ -63,14 +67,31 @@ fun WeatherMainScreen (
                     onClick = { mainViewModel.refreshForecasts() },
                     shape = RoundedCornerShape(16.dp),
                     modifier = Modifier
-                        .align(Alignment.BottomEnd)
+                        .align(Alignment.BottomStart)
                         .padding(horizontal = 24.dp, vertical = 12.dp)
                         .height(60.dp)
                         .width(60.dp)
                 ) {
                     Icon(
                         imageVector = Icons.Default.Refresh,
-                        contentDescription = "Refresh",
+                        contentDescription = "Refresh Button",
+                        modifier = Modifier
+                            .size(36.dp)
+                    )
+                }
+
+                FloatingActionButton(
+                    onClick = { navController.navigate(Screen.SettingsScreen.route) },
+                    shape = RoundedCornerShape(16.dp),
+                    modifier = Modifier
+                        .align(Alignment.BottomEnd)
+                        .padding(horizontal = 24.dp, vertical = 12.dp)
+                        .height(60.dp)
+                        .width(60.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Settings,
+                        contentDescription = "Settings Button",
                         modifier = Modifier
                             .size(36.dp)
                     )
@@ -172,7 +193,10 @@ fun WeatherInfoCardText(info: String, size: Int, fontWeight: FontWeight = FontWe
 @Preview
 @Composable
 fun DefaultPreview() {
+    val navController = rememberNavController()
+    val mainViewModel: MainViewModel = viewModel()
+
     MaterialTheme{
-        WeatherMainScreen()
+        WeatherMainScreen(navController, mainViewModel)
     }
 }
