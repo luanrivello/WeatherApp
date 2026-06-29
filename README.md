@@ -1,3 +1,17 @@
+  ## My Changes
+  - Migrated UI from Java XML to Jetpack Compose
+  - Completed all todo items in the project's README:
+    - [x] 🔑 Add your API key to the `local.properties` file: `WEATHER_API_KEY= <your-api-key-here>`
+    - [x] 📊 Fetch and display **pressure** data from the API
+    - [x] 🔄 Implement data refresh on **Refresh** button click
+    - [x] 🎨 Fix broken **weather icons**
+    - [x] 🧹 Eliminate **duplicate data** issues
+  - Made weather locations savable and loadable from shared preferences
+  - Implemented a navigation system
+  - Created a settings screen that allows the user to add or remove locations
+
+---
+
 # 🌦️ Challenge - Weather App
 
 Welcome to the **Weather App Challenge!**
@@ -7,7 +21,7 @@ We use predefined latitude and longitude coordinates from various cities to fetc
 
 - 🌡️ Temperature
 - 💧 Humidity
-- 🌬️ Pressure (coming soon!)
+- 🌬️ Pressure
 
 <img src="weather_app.gif" alt="Weather app" height="500">
 
