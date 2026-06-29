@@ -32,6 +32,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
@@ -74,11 +75,11 @@ fun SettingsView(
 
             LazyColumn () {
                 itemsIndexed(localizations) { index, latlon ->
-                    WeatherItemSettings(settingsViewModel, "test", latlon)
+                    SavedLocalizationsCard(settingsViewModel, latlon)
                 }
 
                 item {
-                    NewLocationInputs(settingsViewModel)
+                    NewLocalizationInputs(settingsViewModel)
                 }
             }
         }
@@ -86,7 +87,7 @@ fun SettingsView(
 }
 
 @Composable
-fun WeatherItemSettings(settingsViewModel: SettingsViewModel, name: String, latlon: kotlin.Pair<String, String>) {
+fun SavedLocalizationsCard(settingsViewModel: SettingsViewModel, latlon: Pair<String, String>) {
     Card (
         modifier = Modifier
             .fillMaxSize()
@@ -100,40 +101,32 @@ fun WeatherItemSettings(settingsViewModel: SettingsViewModel, name: String, latl
                 .fillMaxWidth()
         ){
                 Text(
-                    text=latlon.first.take(7),
+                    text=latlon.first,
                     modifier = Modifier
                         .align(Alignment.CenterVertically)
                         .padding(12.dp)
                 )
                 Text(
-                    text=latlon.second.take(7),
+                    text=latlon.second,
                     modifier = Modifier
                         .align(Alignment.CenterVertically)
                         .padding(12.dp)
                 )
 
-            IconButton(
-                onClick = { settingsViewModel.removeLocalization(latlon.first, latlon.second) },
-                modifier = Modifier
-                    .align(Alignment.CenterVertically)
-
+            SettingsIconButton(
+                description = "Remove Button",
+                Icons.Default.RemoveCircleOutline,
+                Color.Red,
+                Modifier.align(Alignment.CenterVertically)
             ) {
-                Icon(
-                    imageVector = Icons.Default.RemoveCircleOutline,
-                    tint = Color.Red,
-                    contentDescription = "Remove",
-                    modifier = Modifier
-                        .align(Alignment.CenterVertically)
-                        .size(36.dp)
-                        .padding(4.dp)
-                )
+                settingsViewModel.removeLocalization(latlon.first, latlon.second)
             }
         }
     }
 }
 
 @Composable
-fun NewLocationInputs(settingsViewModel: SettingsViewModel) {
+fun NewLocalizationInputs(settingsViewModel: SettingsViewModel) {
     Card (
         modifier = Modifier
             .fillMaxSize()
@@ -159,23 +152,33 @@ fun NewLocationInputs(settingsViewModel: SettingsViewModel) {
                 )
             }
 
-            IconButton(
-                onClick = { settingsViewModel.addLocalization(lat,lon) },
-                modifier = Modifier
-                    .align(Alignment.CenterVertically)
+            SettingsIconButton(
+                description =  "Add Button",
+                Icons.Default.AddCircleOutline,
+                Color.Black,
+                Modifier.align(Alignment.CenterVertically)
             ) {
-                Icon(
-                    imageVector = Icons.Default.AddCircleOutline,
-                    tint = Color.Black,
-                    contentDescription = "Add",
-                    modifier = Modifier
-                        .align(Alignment.CenterVertically)
-                        .size(36.dp)
-                        .padding(4.dp)
-                )
+                settingsViewModel.addLocalization(lat,lon)
             }
         }
 
+    }
+}
+
+@Composable
+fun SettingsIconButton(description: String, icon: ImageVector, color: Color, modifier: Modifier, doAction: () -> Unit){
+    IconButton(
+        onClick = { doAction() },
+        modifier = modifier
+    ) {
+        Icon(
+            imageVector = icon,
+            tint = color,
+            contentDescription = description,
+            modifier = Modifier
+                .size(36.dp)
+                .padding(4.dp)
+        )
     }
 }
 

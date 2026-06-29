@@ -28,6 +28,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -63,41 +64,42 @@ fun WeatherMainScreen(
             Box(modifier = Modifier.fillMaxSize()) {
                 WeatherInfoCardList(mainViewModel)
 
-                FloatingActionButton(
-                    onClick = { mainViewModel.refreshForecasts() },
-                    shape = RoundedCornerShape(16.dp),
-                    modifier = Modifier
-                        .align(Alignment.BottomStart)
-                        .padding(horizontal = 24.dp, vertical = 12.dp)
-                        .height(60.dp)
-                        .width(60.dp)
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Refresh,
-                        contentDescription = "Refresh Button",
-                        modifier = Modifier
-                            .size(36.dp)
-                    )
+                FloatingButton(
+                    description = "Settings Button",
+                    Icons.Default.Refresh,
+                    Modifier.align(Alignment.BottomStart)
+                ){
+                    mainViewModel.refreshForecasts()
                 }
 
-                FloatingActionButton(
-                    onClick = { navController.navigate(Screen.SettingsScreen.route) },
-                    shape = RoundedCornerShape(16.dp),
-                    modifier = Modifier
-                        .align(Alignment.BottomEnd)
-                        .padding(horizontal = 24.dp, vertical = 12.dp)
-                        .height(60.dp)
-                        .width(60.dp)
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Settings,
-                        contentDescription = "Settings Button",
-                        modifier = Modifier
-                            .size(36.dp)
-                    )
+                FloatingButton(
+                    description = "Settings Button",
+                    Icons.Default.Settings,
+                    Modifier.align(Alignment.BottomEnd)
+                ){
+                    navController.navigate(Screen.SettingsScreen.route)
                 }
             }
         }
+    }
+}
+
+@Composable
+fun FloatingButton(description: String, icon: ImageVector, modifier: Modifier, doAction: () -> Unit){
+    FloatingActionButton(
+        onClick = { doAction() },
+        shape = RoundedCornerShape(16.dp),
+        modifier = modifier
+            .padding(horizontal = 24.dp, vertical = 12.dp)
+            .height(60.dp)
+            .width(60.dp)
+    ) {
+        Icon(
+            imageVector = icon,
+            contentDescription = description,
+            modifier = Modifier
+                .size(36.dp)
+        )
     }
 }
 

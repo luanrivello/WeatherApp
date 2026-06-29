@@ -18,7 +18,7 @@ class MainActivity : AppCompatActivity() {
         setContent {
             MaterialTheme{
                 navController = rememberNavController()
-                SetupNavGraph(navController = navController, )
+                SetupNavGraph(navController = navController)
             }
         }
     }

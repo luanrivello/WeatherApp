@@ -17,7 +17,6 @@ import com.example.findinglogs.model.repo.remote.api.WeatherCallback;
 import com.example.findinglogs.model.util.Logger;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 public class MainViewModel extends AndroidViewModel {
