@@ -24,7 +24,7 @@ class WeatherUiInfo (
         tempMax = convertToCelsius(weather.main.temp_max),
         tempMin = convertToCelsius(weather.main.temp_min),
         pressure = "${weather.main.pressure} hPa",
-        humidity = "${weather.main.humidity}$",
+        humidity = "${weather.main.humidity}%",
         weatherIcon = getIcon(weather, context),
         cardBackgroundColor = getCardBackgroundColor(weather),
     )
