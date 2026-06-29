@@ -5,6 +5,7 @@ import android.app.Application;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
+import android.util.Pair;
 
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
@@ -32,7 +33,7 @@ public class MainViewModel extends AndroidViewModel {
 
     public MainViewModel(Application application) {
         super(application);
-        mRepository = new Repository(application);
+        mRepository = Repository.getInstance(application);
         startFetching();
     }
 

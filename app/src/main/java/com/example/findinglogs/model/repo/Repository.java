@@ -12,13 +12,23 @@ import java.util.ArrayList;
 
 public class Repository {
     private static final String TAG = Repository.class.getSimpleName();
+    private static Repository repository;
 
     private final WeatherManager weatherManager;
     private final SharedPrefManager sharedPrefManagerManager;
-    private ArrayList<String> localizations = new ArrayList<>();
+    private final ArrayList<String> localizations = new ArrayList<>();
 
-    public Repository(Application application) {
+    public static Repository getInstance(Application application) {
+        if (repository == null) {
+            repository = new Repository(application);
+        }
+
+        return repository;
+    }
+
+    private Repository(Application application) {
         if (Logger.ISLOGABLE) Logger.d(TAG, "Repository()");
+
         weatherManager = new WeatherManager();
         sharedPrefManagerManager = SharedPrefManager.getInstance(application);
 
@@ -82,8 +92,8 @@ public class Repository {
         if (Logger.ISLOGABLE) Logger.d(TAG, "Saved localizations: " + localizations.toString());
     }
 
-    public void removeLocalization(int index) {
-        localizations.remove(index);
+    public void removeLocalization(String lat, String lon) {
+        localizations.remove(lat + "," + lon);
         sharedPrefManagerManager.writeString("localizations", localizations.toString());
         if (Logger.ISLOGABLE) Logger.d(TAG, "Saved localizations: " + localizations.toString());
     }
